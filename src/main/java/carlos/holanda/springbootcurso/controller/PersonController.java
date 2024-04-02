@@ -3,6 +3,7 @@ package carlos.holanda.springbootcurso.controller;
 import carlos.holanda.springbootcurso.model.Person;
 import carlos.holanda.springbootcurso.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class PersonController {
     }
 
     @GetMapping("/{id}")
-    public Person findById(@PathVariable(value = "id") String id) {
+    public Person findById(@PathVariable(value = "id") Long id) {
         return personService.findById(id);
     }
 
@@ -28,13 +29,14 @@ public class PersonController {
         return personService.create(person);
     }
 
-    @PutMapping()
-    public Person update(@RequestBody Person person) {
-        return personService.update(person);
+    @PutMapping("/{id}")
+    public Person update(@PathVariable(value = "id") Long id, @RequestBody Person person) {
+        return personService.update(id, person);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable(value = "id") String id) {
+    public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
         personService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

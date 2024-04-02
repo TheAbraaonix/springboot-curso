@@ -1,60 +1,54 @@
 package carlos.holanda.springbootcurso.service;
 
+import carlos.holanda.springbootcurso.exception.RecordNotFoundException;
 import carlos.holanda.springbootcurso.model.Person;
+import carlos.holanda.springbootcurso.repository.PersonRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
 @Service
 public class PersonService {
-    private final AtomicLong counter = new AtomicLong();
     private final Logger logger = Logger.getLogger(PersonService.class.getName());
+
+    @Autowired
+    PersonRepository personRepository;
 
     public List<Person> findAll() {
         logger.info("Finding all people!");
-        List<Person> persons = new ArrayList<>();
-        for(int i = 0; i < 8; i++) {
-            Person person = mockPerson(i);
-            persons.add(person);
-        }
-        return persons;
+
+        return personRepository.findAll();
     }
 
-    public Person findById(String id) {
+    public Person findById(Long id) {
         logger.info("Finding one person!");
-        Person person = new Person();
-        person.setId(counter.incrementAndGet());
-        person.setFirstName("Carlos");
-        person.setLastName("Holanda");
-        person.setAddress("Vila Velha, Espírito Santo, Brasil");
-        person.setGender("Male");
-        return person;
+        return personRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Record not found."));
     }
 
     public Person create(Person person) {
         logger.info("Creating one person!");
-        return person;
+        return personRepository.save(person);
     }
 
-    public Person update(Person person) {
+    public Person update(Long id, Person person) {
         logger.info("Updating one person!");
-        return person;
+
+        Person foundPerson = findById(id);
+
+        foundPerson.setFirstName(person.getFirstName());
+        foundPerson.setLastName(person.getLastName());
+        foundPerson.setAddress(person.getAddress());
+        foundPerson.setGender(person.getGender());
+
+        return personRepository.save(foundPerson);
     }
 
-    public void delete(String id) {
+    public void delete(Long id) {
         logger.info("Deleting one person!");
-    }
 
-    private Person mockPerson(int i) {
-        Person person = new Person();
-        person.setId(counter.incrementAndGet());
-        person.setFirstName("FirstName: " + i);
-        person.setLastName("LastName: " + i);
-        person.setAddress("Address: " + i);
-        person.setGender("Gender: " + i);
-        return person;
+        Person foundPerson = findById(id);
+        personRepository.delete(foundPerson);
     }
 }
