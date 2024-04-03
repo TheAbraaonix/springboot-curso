@@ -1,6 +1,7 @@
 package carlos.holanda.springbootcurso.controller;
 
 import carlos.holanda.springbootcurso.data.vo.v1.PersonVO;
+import carlos.holanda.springbootcurso.data.vo.v2.PersonVOV2;
 import carlos.holanda.springbootcurso.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,11 @@ public class PersonController {
     @PostMapping()
     public PersonVO create(@RequestBody PersonVO person) {
         return personService.create(person);
+    }
+
+    @PostMapping("/v2")
+    public PersonVOV2 createV2(@RequestBody PersonVOV2 person) {
+        return personService.createV2(person);
     }
 
     @PutMapping("/{id}")

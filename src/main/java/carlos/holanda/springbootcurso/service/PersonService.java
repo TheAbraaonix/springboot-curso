@@ -1,8 +1,10 @@
 package carlos.holanda.springbootcurso.service;
 
 import carlos.holanda.springbootcurso.data.vo.v1.PersonVO;
+import carlos.holanda.springbootcurso.data.vo.v2.PersonVOV2;
 import carlos.holanda.springbootcurso.exception.RecordNotFoundException;
 import carlos.holanda.springbootcurso.mapper.DozzerMapper;
+import carlos.holanda.springbootcurso.mapper.custom.PersonMapper;
 import carlos.holanda.springbootcurso.model.Person;
 import carlos.holanda.springbootcurso.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,9 @@ public class PersonService {
 
     @Autowired
     PersonRepository personRepository;
+
+    @Autowired
+    PersonMapper personMapper;
 
     public List<PersonVO> findAll() {
         logger.info("Finding all people!");
@@ -37,6 +42,15 @@ public class PersonService {
 
         var entity = DozzerMapper.parseObject(person, Person.class);
         var vo = DozzerMapper.parseObject(personRepository.save(entity), PersonVO.class);
+
+        return vo;
+    }
+
+    public PersonVOV2 createV2(PersonVOV2 person) {
+        logger.info("Creating one person!");
+
+        var entity = personMapper.convertVoToEntity(person);
+        var vo = personMapper.convertEntityToVo(personRepository.save(entity));
 
         return vo;
     }
