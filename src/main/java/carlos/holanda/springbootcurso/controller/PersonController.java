@@ -1,6 +1,6 @@
 package carlos.holanda.springbootcurso.controller;
 
-import carlos.holanda.springbootcurso.model.Person;
+import carlos.holanda.springbootcurso.data.vo.v1.PersonVO;
 import carlos.holanda.springbootcurso.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,22 +15,22 @@ public class PersonController {
     private PersonService personService;
 
     @GetMapping()
-    public List<Person> findAll() {
+    public List<PersonVO> findAll() {
         return personService.findAll();
     }
 
     @GetMapping("/{id}")
-    public Person findById(@PathVariable(value = "id") Long id) {
+    public PersonVO findById(@PathVariable(value = "id") Long id) {
         return personService.findById(id);
     }
 
     @PostMapping()
-    public Person create(@RequestBody Person person) {
+    public PersonVO create(@RequestBody PersonVO person) {
         return personService.create(person);
     }
 
     @PutMapping("/{id}")
-    public Person update(@PathVariable(value = "id") Long id, @RequestBody Person person) {
+    public PersonVO update(@PathVariable(value = "id") Long id, @RequestBody PersonVO person) {
         return personService.update(id, person);
     }
 

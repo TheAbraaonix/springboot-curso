@@ -1,6 +1,8 @@
 package carlos.holanda.springbootcurso.service;
 
+import carlos.holanda.springbootcurso.data.vo.v1.PersonVO;
 import carlos.holanda.springbootcurso.exception.RecordNotFoundException;
+import carlos.holanda.springbootcurso.mapper.DozzerMapper;
 import carlos.holanda.springbootcurso.model.Person;
 import carlos.holanda.springbootcurso.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,39 +18,47 @@ public class PersonService {
     @Autowired
     PersonRepository personRepository;
 
-    public List<Person> findAll() {
+    public List<PersonVO> findAll() {
         logger.info("Finding all people!");
 
-        return personRepository.findAll();
+        return DozzerMapper.parseListObjects(personRepository.findAll(), PersonVO.class);
     }
 
-    public Person findById(Long id) {
+    public PersonVO findById(Long id) {
         logger.info("Finding one person!");
-        return personRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Record not found."));
+
+        var entity = personRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Record not found."));
+
+        return DozzerMapper.parseObject(entity, PersonVO.class);
     }
 
-    public Person create(Person person) {
+    public PersonVO create(PersonVO person) {
         logger.info("Creating one person!");
-        return personRepository.save(person);
+
+        var entity = DozzerMapper.parseObject(person, Person.class);
+        var vo = DozzerMapper.parseObject(personRepository.save(entity), PersonVO.class);
+
+        return vo;
     }
 
-    public Person update(Long id, Person person) {
+    public PersonVO update(Long id, PersonVO person) {
         logger.info("Updating one person!");
 
-        Person foundPerson = findById(id);
+        var entity = personRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Record not found."));
 
-        foundPerson.setFirstName(person.getFirstName());
-        foundPerson.setLastName(person.getLastName());
-        foundPerson.setAddress(person.getAddress());
-        foundPerson.setGender(person.getGender());
+        entity.setFirstName(person.getFirstName());
+        entity.setLastName(person.getLastName());
+        entity.setAddress(person.getAddress());
+        entity.setGender(person.getGender());
 
-        return personRepository.save(foundPerson);
+        var vo = DozzerMapper.parseObject(personRepository.save(entity), PersonVO.class);
+        return vo;
     }
 
     public void delete(Long id) {
         logger.info("Deleting one person!");
 
-        Person foundPerson = findById(id);
-        personRepository.delete(foundPerson);
+        var entity = personRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Record not found."));
+        personRepository.delete(entity);
     }
 }
